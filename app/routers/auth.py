@@ -1,16 +1,29 @@
-from fastapi import APIRouter
-from ..models.user import UserCreate,UserWithToken,UserLogin
-from ..services import auth
-from ..dependencies.db import SessionDep
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+
+from app.dependencies.auth import AuthServiceDependency
+from app.models.auth import AuthResponse
+from app.models.user import UserCreate, UserLogin
+
 router = APIRouter(
     prefix="/auth",
     tags=["auth"]
 )
 
+
 @router.post("/signup")
-async def signup(user: UserCreate,session:SessionDep)->UserWithToken:
-    return auth.signup(user,session)
+async def signup(*, user: UserCreate, service: AuthServiceDependency) -> AuthResponse:
+    return service.signup(user)
+
 
 @router.post("/login")
-async def login(user: UserLogin,session:SessionDep)->UserWithToken:
-    return auth.signin(user,session)
+async def login(*, form_data: OAuth2PasswordRequestForm = Depends(), service: AuthServiceDependency) -> AuthResponse:
+    user_login = UserLogin(username=form_data.username, password=form_data.password)
+    auth_response = service.login(user_login)
+    if auth_response is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return auth_response
