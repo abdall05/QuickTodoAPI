@@ -1,5 +1,5 @@
 from fastapi import Depends
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 from app.repositories.user import UserRepository
 from app.dependencies.db import get_session
 
