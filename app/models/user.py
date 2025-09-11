@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from pydantic import field_validator
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
 
 from enum import Enum
+
+if TYPE_CHECKING:
+    from .task import Task
 
 
 class Role(str, Enum):
@@ -29,6 +34,7 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     password_hash: str
     role: Role = Field(default=Role.USER)
+    tasks: list["Task"] = Relationship(back_populates="user", cascade_delete=True)
 
 
 class UserPublic(UserBase):

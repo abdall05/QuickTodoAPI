@@ -13,6 +13,3 @@ class TokenData(SQLModel):
     role: Role = Field(default=Role.USER)
 
 
-class AuthResponse(SQLModel):
-    user: UserPublic
-    token: AccessToken

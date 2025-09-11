@@ -1,4 +1,4 @@
-from sqlmodel import Session, select, delete, col
+from sqlmodel import Session, select, delete
 from app.models.task import Task
 
 
@@ -27,8 +27,8 @@ class TaskRepository:
         self.session.delete(task)
         self.session.commit()
 
-    def delete_user_tasks(self, user_id: int):
-        statement = delete(Task).where(col(Task.user_id == user_id))
+    def delete_tasks(self, user_id: int):
+        statement = delete(Task).where(Task.user_id == user_id)
         self.session.exec(statement)  # type: ignore
         self.session.commit()
 
