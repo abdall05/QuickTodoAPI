@@ -67,9 +67,8 @@ model structures**.
 
 ## 🧪 Example Payloads
 
-**Signup**
+## 1️⃣ Signup
 
-```json
 {
   "username": "john123",
   "email": "john@example.com",
@@ -77,37 +76,121 @@ model structures**.
   "password": "strongpassword",
   "password_confirm": "strongpassword"
 }
-```
 
-### Login (Form Data)
+## 2️⃣ Login
 
-**POST** `/auth/login`  
-**Content-Type:** `application/x-www-form-urlencoded`
+POST /auth/login  
+Content-Type: application/x-www-form-urlencoded
 
-| Field    | Type   | Description   |
-|----------|--------|---------------|
-| username | string | Your username |
-| password | string | Your password |
+Fields:
+- username: Your username
+- password: Your password
 
-**Example using `curl`:**
+Example using curl:
 
-```bash
 curl -X POST "http://127.0.0.1:8000/auth/login" \
 -H "Content-Type: application/x-www-form-urlencoded" \
 -d "username=john123&password=strongpassword"
-```
 
-**Create Task**
+Example Response:
 
-```json
 {
-  "title": "Buy groceries",
-  "description": "Milk, Bread, Eggs"
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJleHAiOjE3NTg1MjcyMDV9.4D0TNpjUxRSulNCogLYyuLfKLj6zPFXnahr3_JkJ47M",
+    "token_type": "Bearer"
 }
-```
 
-Use the returned `access_token` from login in the `Authorization` header:  
-`Authorization: Bearer <token>`
+Use the returned access_token from login in the Authorization header:  
+Authorization: Bearer <token>
+
+## 3️⃣ Create a Task
+
+POST /tasks/  
+JSON Payload:
+
+{
+    "title": "Buy groceries",
+    "description": "Milk, Bread, Eggs"
+}
+
+Example Response:
+
+{
+    "title": "Buy groceries",
+    "description": "Milk, Bread, Eggs",
+    "id": 3,
+    "completed": false,
+    "created_at": "2025-09-22T07:15:47.040381"
+}
+
+## 4️⃣ Update a Task (Mark as Completed)
+
+PATCH /tasks/{task_id}  
+JSON Payload:
+
+{
+    "completed": true
+}
+
+Example Response:
+
+{
+    "title": "Buy groceries",
+    "description": "Milk, Bread, Eggs",
+    "id": 3,
+    "completed": true,
+    "created_at": "2025-09-22T07:15:47.040381"
+}
+
+## 5️⃣ Get All Tasks
+
+GET /tasks/  
+Header: Authorization: Bearer <token>
+
+Example Response:
+
+[
+    {
+        "title": "CP",
+        "description": "30 minutes",
+        "id": 2,
+        "completed": false,
+        "created_at": "2025-09-22T07:02:13.563533"
+    },
+    {
+        "title": "Buy groceries",
+        "description": "Milk, Bread, Eggs",
+        "id": 3,
+        "completed": false,
+        "created_at": "2025-09-22T07:15:47.040381"
+    }
+]
+
+## 6️⃣ Delete a Task
+
+DELETE /tasks/{task_id}  
+Header: Authorization: Bearer <token>
+
+Example Response: 204 No Content
+
+## 7️⃣ Delete All Tasks
+
+DELETE /tasks/  
+Header: Authorization: Bearer <token>
+
+Example Response: 204 No Content
+
+### 8️⃣ Get Current User
+GET /users/me  
+Header: Authorization: Bearer <token>
+
+Example Response:
+{
+  "username": "ali99",
+  "name": "ali",
+  "id": 1,
+  "role": "user"
+}
+
 
 ## 🗄 Database Schema
 
@@ -134,6 +217,16 @@ Use the returned `access_token` from login in the `Authorization` header:
 
 - `User.tasks` → list of tasks for that user (`back_populates="user"`)
 - `Task.user` → the owner user of the task (`back_populates="tasks"`)
+- 
+## 🚀 Future Improvements
+
+- Add **email-based password recovery** (forgot password) functionality.  
+  Users can request a password reset link via email to securely update their password.
+
+- Implement **email verification** upon signup to ensure valid user accounts.
+
+- Add **pagination and filtering** for tasks and users endpoints.
+
 
 ## 📄 License
 
